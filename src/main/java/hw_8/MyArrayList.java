@@ -16,9 +16,9 @@ public class MyArrayList<T> {
         if (size == digits.length - 1) {
             resize(digits.length * 2);
         }
-            digits[size++] = value;
-            return true;
-        }
+        digits[size++] = value;
+        return true;
+    }
 
     public void remove(int index) {
         int i = 0;
@@ -28,7 +28,7 @@ public class MyArrayList<T> {
         }
         digits[size] = null;
         size--;
-        if(digits.length > capacity && size < digits.length / 4){
+        if (digits.length > capacity && size < digits.length / 4) {
             resize(digits.length / 2);
         }
     }
@@ -45,7 +45,7 @@ public class MyArrayList<T> {
     }
 
     public T get(int index) {
-        if(index >= size) throw new IndexOutOfBoundsException
+        if (index >= size) throw new IndexOutOfBoundsException
                 ("This Index is out of bounds of the current size " + size);
         return (T) digits[index];
     }
