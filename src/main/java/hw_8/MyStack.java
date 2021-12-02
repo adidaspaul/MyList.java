@@ -1,56 +1,128 @@
 package hw_8;
 
-public class MyStack {
-    public int length;
-    int top = 0;
-    public static Object[] stack;
+import java.util.EmptyStackException;
 
-    public void push(Object value) {
-        stack[top] = value;
-        top++;
-    }
+public class MyStack<E> {
 
-    public int size() {
-        return top;
-    }
+    private Node<E> firstNode = null;
+    private Node<E> lastNode = null;
+    private int size = 0;
 
-    public boolean isEmpty() {
-        return top <= 0;
-    }
+    private static class Node<E> {
+        E data;
+        Node<E> next;
 
-    public Object pop() {
-        Object value = null;
-        if (isEmpty()) {
-            System.out.println("Stack is empty");
-        } else {
-            top--;
-            value = stack[top];
-            stack[top] = 0;
+        Node(E data, Node<E> next) {
+            this.data = data;
+            this.next = next;
         }
-        return value;
     }
 
-    public Object peek() {
-        Object value = stack[top - 1];
-        return value;
+    public void push(E data) {
+        Node<E> newNode = new Node<>(data, null);
+        newNode.data = data;
+        if (lastNode == null) {
+            firstNode = newNode;
+            lastNode = newNode;
+            size++;
+        } else {
+            lastNode.next = newNode;
+            lastNode = newNode;
+            size++;
+        }
     }
 
     public void remove(int index) {
-        try {
-            int numMoved = top - index - 1;
-            System.arraycopy(stack, index + 1, stack, index, numMoved);
-            stack[--top] = null;
-        } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("Unable to remove element at index - " + index +
-                    ". Index out of bounds or stack is empty.");
+        checkElementIndex(index);
+        if (firstNode == lastNode) {
+            firstNode = null;
+            lastNode = null;
+            size--;
+        } else if (index == size - 1) {
+            lastNode = node(index - 1);
+            size--;
+        } else if (index == 0 && size > 1) {
+            firstNode = firstNode.next;
+            size--;
+        } else {
+            node(index).data = null;
+            node(index - 1).next = node(index + 1);
+            size--;
         }
     }
 
     public void clear() {
-        for (int i = 0; i < top; i++) {
-            stack[i] = 0;
+        for (Node<E> newFirstNode = this.firstNode; newFirstNode != null; size--) {
+            Node newNode = newFirstNode.next;
+            newFirstNode.next = null;
+            newFirstNode.data = null;
+            newFirstNode = newNode;
         }
-        top = 0;
+        lastNode = null;
+        firstNode = null;
+        size = 0;
+    }
+
+    public Object peek() {
+        final Node<E> newNode = lastNode;
+
+        if (newNode == null) {
+            throw new EmptyStackException();
+        }
+        return newNode.data;
+    }
+
+    public Object pop() {
+        if (firstNode == null) {
+            throw new EmptyStackException();
+        } else {
+            final Object element = lastNode.data;
+            remove(size - 1);
+
+            return element;
+        }
+    }
+
+    private Node node(int index) {
+        checkElementIndex(index);
+        int tag = 0;
+
+        Node tempNode = null;
+
+        for (Node newNode = this.firstNode; newNode != null; newNode = newNode.next) {
+
+            if (tag == index) {
+                tempNode = newNode;
+                break;
+            }
+            tag++;
+        }
+        return tempNode;
+    }
+
+    public Object get(int index) {
+
+        return this.node(index).data;
+    }
+
+    public void getAll() {
+        for (int i = 0; i < size; i++) {
+            System.out.println(get(i));
+        }
+    }
+
+    private void checkElementIndex(int index) {
+        if (!isElementIndex(index))
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + this.size);
+    }
+
+    private boolean isElementIndex(int index) {
+
+        return index >= 0 && index <= size;
+    }
+
+    public int size() {
+        return size;
     }
 }
 
