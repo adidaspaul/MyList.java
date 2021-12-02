@@ -1,62 +1,53 @@
 package hw_8;
 
-import java.util.Arrays;
-import java.util.Objects;
-public class MyArrayList {
-        static int[] digits = new int [5];
-        int size = 0;
+public class MyArrayList<T> {
+    private final int capacity = 10;
+    private Object[] digits = new Object[capacity];
+    private int size = 0;
 
-/*
-Add method;
-*/
-        public boolean add ( int value){
-            if (size == digits.length) {
-                resize();
-            }
-            digits[size] = value;
-            size++;
+
+    public void resize(int i) {
+        Object[] digits1 = new Object[i];
+        System.arraycopy(digits, 0, digits1, 0, size);
+        digits = digits1;
+    }
+
+    public boolean add(T value) {
+        if (size == digits.length - 1) {
+            resize(digits.length * 2);
+        }
+            digits[size++] = value;
             return true;
         }
- /*
-to change the size when adding more elements;
-*/
-       public void resize() {
-            digits = (int[]) Arrays.copyOf(digits, (size * 3 / 2 + 1));
-        }
-/*
-Remove method;
-*/
-    public int remove(int index){
-        Objects.checkIndex(index, size);
-        int element = get(index);
-        digits[index] = 0;
-        for (int i = 0; i < size; i++) {
+
+    public void remove(int index) {
+        int i = 0;
+        while (i < size) {
             digits[i] = digits[i + 1];
+            i++;
         }
+        digits[size] = null;
         size--;
-        return element;
+        if(digits.length > capacity && size < digits.length / 4){
+            resize(digits.length / 2);
+        }
     }
-/*
-Clear method;
-*/
+
     public void clear() {
         for (int i = 0; i < size; i++) {
-            digits[i] = 0;
+            digits[i] = null;
         }
         size = 0;
     }
-/*
-Size method;
-*/
-    public int size(){
+
+    public int size() {
         return size;
     }
-/*
-Get method;
-*/
-    public int get(int index){
-        Objects.checkIndex(index,size);
-        return digits[index];
+
+    public T get(int index) {
+        if(index >= size) throw new IndexOutOfBoundsException
+                ("This Index is out of bounds of the current size " + size);
+        return (T) digits[index];
     }
 
 }
