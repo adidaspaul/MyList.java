@@ -28,8 +28,9 @@ public class MyLinkedList<E> {
             firstNode = newElement;
         } else {
             addNode.next = newElement;
-            size++;
         }
+            size++;
+
     }
 
     public boolean add(E e){
@@ -46,10 +47,11 @@ public class MyLinkedList<E> {
         }
         if(node.next == null){
             lastNode = node.prev;
-        } else{
+        } else {
             node.next.prev = node.next;
-            size--;
         }
+            size--;
+
     }
 
     public void clear(){
